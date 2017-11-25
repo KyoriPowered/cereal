@@ -27,6 +27,11 @@ repositories {
 }
 
 dependencies {
+  compile 'com.github.ben-manes.caffeine:caffeine:2.6.0'
+  compile 'net.kyori:blizzard:1.0.4-JDK8144185'
+  compile 'net.kyori:gson:2.8.3-SNAPSHOT'
+  compile 'net.kyori:lunar:1.0.3'
+  compile 'org.ow2.asm:asm-debug-all:5.2'
   testCompile 'junit:junit:4.12'
 }
 
@@ -73,7 +78,7 @@ if (project.hasProperty('sonatypeUsername') && project.hasProperty('sonatypePass
         }
 
         pom.project {
-          description 'A library for accessing the Mojang authentication API.'
+          description 'A document generation library for use with Gson.'
           name project.name
           url 'https://github.com/KyoriPowered/cereal/'
 
