@@ -115,7 +115,7 @@ final class DocumentMeta<D extends Document> {
     }
 
     @Nullable
-    Object deserialize(@NonNull final JsonElement element, @NonNull final JsonDeserializationContext context) {
+    Object deserialize(final JsonElement element, final JsonDeserializationContext context) {
       return context.deserialize(element, this.genericType());
     }
 
