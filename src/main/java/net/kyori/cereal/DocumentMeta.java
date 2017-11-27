@@ -179,7 +179,7 @@ final class DocumentMeta<D extends Document> {
 
     @Nullable
     @Override
-    Object deserialize(@NonNull final JsonElement element, @NonNull final JsonDeserializationContext context) {
+    Object deserialize(final JsonElement element, final JsonDeserializationContext context) {
       return Optional.ofNullable(context.deserialize(element, this.genericType()));
     }
   }
