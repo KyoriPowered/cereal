@@ -23,8 +23,21 @@
  */
 package net.kyori.cereal;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
  * A document is something that can be serialized.
  */
 public interface Document {
+
+  /**
+   * Marks a method for exclusion from serialization.
+   */
+  @Retention(RetentionPolicy.RUNTIME)
+  @Target(ElementType.METHOD)
+  @interface Exclude {
+  }
 }

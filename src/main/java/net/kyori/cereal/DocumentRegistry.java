@@ -43,6 +43,9 @@ final class DocumentRegistry {
         if(!Document.class.isAssignableFrom(method.getDeclaringClass())) {
           continue;
         }
+        if(method.isAnnotationPresent(Document.Exclude.class)) {
+          continue;
+        }
         fields.put(method.getName(), DocumentMeta.Field.create(method));
       }
       return new DocumentMeta<>(type, new LinkedHashMap<>(fields));
