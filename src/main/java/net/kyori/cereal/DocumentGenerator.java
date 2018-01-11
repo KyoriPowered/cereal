@@ -37,6 +37,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.objectweb.asm.Opcodes.ACC_FINAL;
@@ -165,7 +166,12 @@ final class DocumentGenerator {
     }
 
     static String concreteName(final Class<?> source) {
-      return String.format("%s.%s.%s", source.getPackage().getName(), PACKAGE, source.getSimpleName() + "Impl");
+      final String name = source.getName();
+      return String.format("%s.%s.%s", source.getPackage().getName(), PACKAGE, name.substring(name.lastIndexOf('.') + 1).replace('$', '_') + "Impl" + randomId());
+    }
+
+    private static String randomId() {
+      return UUID.randomUUID().toString().substring(26);
     }
 
     private static String constructorDescriptor(final Iterable<Class<?>> parameters) {
