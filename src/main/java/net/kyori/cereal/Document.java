@@ -32,12 +32,17 @@ import java.lang.annotation.Target;
  * A document is something that can be serialized.
  */
 public interface Document {
-
   /**
    * Marks a method for exclusion from serialization.
    */
   @Retention(RetentionPolicy.RUNTIME)
   @Target(ElementType.METHOD)
   @interface Exclude {
+    /**
+     * Tests if the method is excluded.
+     *
+     * @return {@code true} if the method is excluded
+     */
+    boolean value() default true;
   }
 }

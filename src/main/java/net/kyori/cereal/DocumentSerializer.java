@@ -37,20 +37,68 @@ import java.lang.reflect.Type;
 /**
  * A serializer used for all {@link Document}s.
  */
-public final class DocumentSerializer implements JsonDeserializer<Document>, JsonSerializer<Document> {
-  private final DocumentRegistry registry = new DocumentRegistry();
-  private final DocumentGenerator generator = new DocumentGenerator(this.registry);
-
-  @Override
-  public Document deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context) throws JsonParseException {
-    final DocumentMeta<? extends Document> meta = this.registry.meta(TypeToken.of(typeOfT).getRawType().asSubclass(Document.class));
-    final Object[] fields = meta.deserialize((JsonObject) json, context);
-    return this.generator.create(meta.type, fields);
+public final class DocumentSerializer {
+  public static JsonSerializer<Document> serializerOnly() {
+    return new Serializer(new DocumentRegistry());
   }
 
-  @Override
-  public JsonElement serialize(final Document src, final Type typeOfSrc, final JsonSerializationContext context) {
-    final DocumentMeta<? extends Document> meta = this.registry.meta(src.getClass());
-    return meta.serialize(src, context);
+  public static JsonDeserializer<Document> deserializerOnly() {
+    return new Deserializer(new DocumentRegistry());
+  }
+
+  public static <S extends JsonDeserializer<Document> & JsonSerializer<Document>> S both() {
+    return (S) new Both();
+  }
+
+  private static final class Serializer implements JsonSerializer<Document> {
+    private final DocumentRegistry registry;
+
+    private Serializer(final DocumentRegistry registry) {
+      this.registry = registry;
+    }
+
+    @Override
+    public JsonElement serialize(final Document src, final Type typeOfSrc, final JsonSerializationContext context) {
+      final DocumentMeta<? extends Document> meta = this.registry.meta(src.getClass());
+      return meta.serialize(src, context);
+    }
+  }
+
+  private static final class Deserializer implements JsonDeserializer<Document> {
+    private final DocumentRegistry registry;
+    private final DocumentGenerator generator;
+
+    private Deserializer(final DocumentRegistry registry) {
+      this.registry = registry;
+      this.generator = new DocumentGenerator(registry);
+    }
+
+    @Override
+    public Document deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context) throws JsonParseException {
+      final DocumentMeta<? extends Document> meta = this.registry.meta(TypeToken.of(typeOfT).getRawType().asSubclass(Document.class));
+      final Object[] fields = meta.deserialize((JsonObject) json, context);
+      return this.generator.create(meta.type, fields);
+    }
+  }
+
+  private static final class Both implements JsonDeserializer<Document>, JsonSerializer<Document> {
+    private final Serializer serializer;
+    private final Deserializer deserializer;
+
+    private Both() {
+      final DocumentRegistry registry = new DocumentRegistry();
+      this.serializer = new Serializer(registry);
+      this.deserializer = new Deserializer(registry);
+    }
+
+    @Override
+    public Document deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context) throws JsonParseException {
+      return this.deserializer.deserialize(json, typeOfT, context);
+    }
+
+    @Override
+    public JsonElement serialize(final Document src, final Type type, final JsonSerializationContext context) {
+      return this.serializer.serialize(src, type, context);
+    }
   }
 }

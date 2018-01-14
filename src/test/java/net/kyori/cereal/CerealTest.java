@@ -34,14 +34,16 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class CerealTest {
   private static final Gson GSON = new GsonBuilder()
-    .registerTypeHierarchyAdapter(Document.class, new DocumentSerializer())
+    .registerTypeHierarchyAdapter(Document.class, DocumentSerializer.both())
     .create();
 
   @Test
-  public void test() {
+  public void testStandard() {
     final Entity source = new Entity() {
       @Override
       public int id() {
@@ -72,10 +74,29 @@ public class CerealTest {
     assertEquals(source.strings(), target.strings());
   }
 
+  @Test
+  public void testWithExclude() {
+    final ThingWithDefault source = () -> 42;
+    final String json = GSON.toJson(source);
+    assertFalse(json.contains("bar"));
+    assertTrue(json.contains("razz"));
+    final ThingWithDefault target = GSON.fromJson(json, ThingWithDefault.class);
+
+    assertEquals(source.thing(), target.thing());
+    assertEquals(source.foo(), target.foo());
+    assertEquals(source.baz(), target.baz());
+  }
+
   public interface Entity extends Document {
     int id();
     String name();
     Optional<String> value();
     Map<String, List<String>> strings();
+  }
+
+  public interface ThingWithDefault extends Document {
+    int thing();
+    /* default is excluded by default */ default String foo() { return "bar"; }
+    @Exclude(false) default String baz() { return "razz"; }
   }
 }

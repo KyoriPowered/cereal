@@ -26,6 +26,7 @@ package net.kyori.cereal;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import net.kyori.blizzard.NonNull;
+import net.kyori.blizzard.Nullable;
 
 import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
@@ -43,7 +44,12 @@ final class DocumentRegistry {
         if(!Document.class.isAssignableFrom(method.getDeclaringClass())) {
           continue;
         }
-        if(method.isAnnotationPresent(Document.Exclude.class)) {
+        boolean excluded = method.isDefault();
+        @Nullable final Document.Exclude exclude = method.getAnnotation(Document.Exclude.class);
+        if(exclude != null) {
+          excluded = exclude.value();
+        }
+        if(excluded) {
           continue;
         }
         fields.put(method.getName(), DocumentMeta.Field.create(method));
