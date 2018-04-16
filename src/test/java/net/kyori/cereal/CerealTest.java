@@ -26,24 +26,24 @@ package net.kyori.cereal;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CerealTest {
+class CerealTest {
   private static final Gson GSON = new GsonBuilder()
     .registerTypeHierarchyAdapter(Document.class, DocumentSerializer.both())
     .create();
 
   @Test
-  public void testStandard() {
+  void testStandard() {
     final Entity source = new Entity() {
       @Override
       public int id() {
@@ -75,7 +75,7 @@ public class CerealTest {
   }
 
   @Test
-  public void testWithExclude() {
+  void testWithExclude() {
     final ThingWithDefault source = () -> 42;
     final String json = GSON.toJson(source);
     assertFalse(json.contains("bar"));

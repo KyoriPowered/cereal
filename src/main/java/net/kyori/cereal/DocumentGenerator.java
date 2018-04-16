@@ -25,8 +25,8 @@ package net.kyori.cereal;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
-import net.kyori.blizzard.NonNull;
 import net.kyori.lunar.exception.Exceptions;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -37,7 +37,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.Map;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.objectweb.asm.Opcodes.ACC_FINAL;
@@ -70,7 +69,7 @@ final class DocumentGenerator {
     return BiteGenerator.generate(interfaceClass, concreteName, this.registry.meta(interfaceClass));
   }
 
-  <I extends Document, C extends I> C create(@NonNull final Class<I> interfaceClass, @NonNull final Object... args) {
+  <I extends Document, C extends I> C create(final @NonNull Class<I> interfaceClass, final @NonNull Object... args) {
     if(!Modifier.isInterface(interfaceClass.getModifiers())) {
       throw new IllegalArgumentException(String.format("Document class '%s' must be an interface", interfaceClass.getName()));
     }
@@ -81,7 +80,7 @@ final class DocumentGenerator {
     }
   }
 
-  private <I extends Document, C extends I> C create0(@NonNull final Class<I> interfaceClass, @NonNull final Object... args) throws IllegalAccessException, InstantiationException, InvocationTargetException {
+  private <I extends Document, C extends I> C create0(final @NonNull Class<I> interfaceClass, final @NonNull Object... args) throws IllegalAccessException, InstantiationException, InvocationTargetException {
     return (C) this.cache.get(interfaceClass).newInstance(args);
   }
 
@@ -167,11 +166,7 @@ final class DocumentGenerator {
 
     static String concreteName(final Class<?> source) {
       final String name = source.getName();
-      return String.format("%s.%s.%s", source.getPackage().getName(), PACKAGE, name.substring(name.lastIndexOf('.') + 1).replace('$', '_') + "Impl" + randomId());
-    }
-
-    private static String randomId() {
-      return UUID.randomUUID().toString().substring(26);
+      return String.format("%s.%s.%s", source.getPackage().getName(), PACKAGE, name.substring(name.lastIndexOf('.') + 1) + "Impl");
     }
 
     private static String constructorDescriptor(final Iterable<Class<?>> parameters) {

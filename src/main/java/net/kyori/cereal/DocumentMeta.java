@@ -27,9 +27,9 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import net.kyori.blizzard.NonNull;
-import net.kyori.blizzard.Nullable;
 import net.kyori.lunar.exception.Exceptions;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -47,24 +47,23 @@ final class DocumentMeta<D extends Document> {
   /**
    * The document class.
    */
-  @NonNull final Class<D> type;
+  final @NonNull Class<D> type;
   /**
    * A map of field names to field entries.
    */
-  @NonNull final Map<String, Field<?>> fields;
+  final @NonNull Map<String, Field<?>> fields;
   /**
    * The amount of fields.
    */
   private final int size;
 
-  DocumentMeta(@NonNull final Class<D> type, @NonNull final Map<String, Field<?>> fields) {
+  DocumentMeta(final @NonNull Class<D> type, final @NonNull Map<String, Field<?>> fields) {
     this.type = type;
     this.fields = fields;
     this.size = this.fields.size();
   }
 
-  @NonNull
-  Object[] deserialize(final JsonObject object, final JsonDeserializationContext context) {
+  @NonNull Object[] deserialize(final JsonObject object, final JsonDeserializationContext context) {
     final Object[] fields = new Object[this.size];
     int i = 0;
     for(final Map.Entry<String, DocumentMeta.Field<?>> entry : this.fields.entrySet()) {
@@ -73,8 +72,7 @@ final class DocumentMeta<D extends Document> {
     return fields;
   }
 
-  @NonNull
-  JsonObject serialize(final Document document, final JsonSerializationContext context) {
+  @NonNull JsonObject serialize(final Document document, final JsonSerializationContext context) {
     final JsonObject object = new JsonObject();
     for(final Map.Entry<String, DocumentMeta.Field<?>> entry : this.fields.entrySet()) {
       object.add(entry.getKey(), entry.getValue().serialize(document, context));
@@ -94,14 +92,11 @@ final class DocumentMeta<D extends Document> {
       this.method.setAccessible(true);
     }
 
-    @NonNull
-    abstract Class<?> type();
+    abstract @NonNull Class<?> type();
 
-    @NonNull
-    abstract Type genericType();
+    abstract @NonNull Type genericType();
 
-    @Nullable
-    T get(final Object object) {
+    @Nullable T get(final Object object) {
       try {
         return (T) this.method.invoke(object);
       } catch(final IllegalAccessException | InvocationTargetException e) {
@@ -109,13 +104,11 @@ final class DocumentMeta<D extends Document> {
       }
     }
 
-    @Nullable
-    JsonElement serialize(@NonNull final Document document, @NonNull final JsonSerializationContext context) {
+    @Nullable JsonElement serialize(final @NonNull Document document, final @NonNull JsonSerializationContext context) {
       return context.serialize(this.get(document), this.genericType());
     }
 
-    @Nullable
-    Object deserialize(final JsonElement element, final JsonDeserializationContext context) {
+    @Nullable Object deserialize(final JsonElement element, final JsonDeserializationContext context) {
       return context.deserialize(element, this.genericType());
     }
 
@@ -138,15 +131,13 @@ final class DocumentMeta<D extends Document> {
       this.genericType = this.method.getGenericReturnType();
     }
 
-    @NonNull
     @Override
-    Class<?> type() {
+    @NonNull Class<?> type() {
       return this.type;
     }
 
-    @NonNull
     @Override
-    Type genericType() {
+    @NonNull Type genericType() {
       return this.genericType;
     }
   }
@@ -159,27 +150,23 @@ final class DocumentMeta<D extends Document> {
       this.genericType = ((ParameterizedType) method.getGenericReturnType()).getActualTypeArguments()[0];
     }
 
-    @NonNull
     @Override
-    Class<?> type() {
+    @NonNull Class<?> type() {
       return Optional.class;
     }
 
-    @NonNull
     @Override
-    Type genericType() {
+    @NonNull Type genericType() {
       return this.genericType;
     }
 
-    @Nullable
     @Override
-    T get(final Object object) {
+    @Nullable T get(final Object object) {
       return ((Optional<T>) super.get(object)).orElse(null);
     }
 
-    @Nullable
     @Override
-    Object deserialize(final JsonElement element, final JsonDeserializationContext context) {
+    @Nullable Object deserialize(final JsonElement element, final JsonDeserializationContext context) {
       return Optional.ofNullable(context.deserialize(element, this.genericType()));
     }
   }

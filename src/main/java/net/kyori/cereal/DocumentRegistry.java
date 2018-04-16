@@ -25,8 +25,8 @@ package net.kyori.cereal;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
-import net.kyori.blizzard.NonNull;
-import net.kyori.blizzard.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
@@ -45,7 +45,7 @@ final class DocumentRegistry {
           continue;
         }
         boolean excluded = method.isDefault();
-        @Nullable final Document.Exclude exclude = method.getAnnotation(Document.Exclude.class);
+        final Document.@Nullable Exclude exclude = method.getAnnotation(Document.Exclude.class);
         if(exclude != null) {
           excluded = exclude.value();
         }
@@ -64,8 +64,7 @@ final class DocumentRegistry {
    * @param <D> the document type
    * @return the document metadata
    */
-  @NonNull
-  <D extends Document> DocumentMeta<D> meta(@NonNull final Class<D> type) {
+  <D extends Document> @NonNull DocumentMeta<D> meta(final @NonNull Class<D> type) {
     return (DocumentMeta<D>) this.meta.get(type);
   }
 }
