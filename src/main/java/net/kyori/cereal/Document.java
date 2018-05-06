@@ -45,4 +45,18 @@ public interface Document {
      */
     boolean value() default true;
   }
+
+  /**
+   * Annotates a field to provide information about it.
+   */
+  @Retention(RetentionPolicy.RUNTIME)
+  @Target(ElementType.METHOD)
+  @interface Field {
+    /**
+     * Gets the name.
+     *
+     * @return the name
+     */
+    String name();
+  }
 }

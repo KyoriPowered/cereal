@@ -52,7 +52,14 @@ final class DocumentRegistry {
         if(excluded) {
           continue;
         }
-        fields.put(method.getName(), DocumentMeta.Field.create(method));
+        String name;
+        final Document.@Nullable Field field = method.getAnnotation(Document.Field.class);
+        if(field != null) {
+          name = field.name();
+        } else {
+          name = method.getName();
+        }
+        fields.put(name, DocumentMeta.Field.create(method));
       }
       return new DocumentMeta<>(type, new LinkedHashMap<>(fields));
     });
