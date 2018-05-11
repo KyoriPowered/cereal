@@ -27,10 +27,10 @@ repositories {
 }
 
 dependencies {
-  compile 'com.github.ben-manes.caffeine:caffeine:2.6.0'
-  compile 'net.kyori:gson:2.8.3-SNAPSHOT'
-  compile 'net.kyori:lunar:1.0.5'
-  compile 'org.checkerframework:checker-qual:2.4.0'
+  compile 'com.github.ben-manes.caffeine:caffeine:2.6.2'
+  compile 'net.kyori:gson:2.8.5-SNAPSHOT'
+  compile 'net.kyori:lunar:1.0.6'
+  compile 'org.checkerframework:checker-qual:2.5.1'
   compile 'org.ow2.asm:asm-debug-all:5.2'
   testCompile 'org.junit.jupiter:junit-jupiter-api:5.0.3'
   testCompile 'org.junit.jupiter:junit-jupiter-engine:5.0.3'
