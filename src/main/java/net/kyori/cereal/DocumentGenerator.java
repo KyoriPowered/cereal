@@ -138,6 +138,10 @@ final class DocumentGenerator {
         mv.visitVarInsn(ALOAD, 0);
         mv.visitVarInsn(type.getOpcode(Opcodes.ILOAD), i);
         mv.visitFieldInsn(PUTFIELD, this.concreteName, name, Type.getDescriptor(field.type()));
+
+        if(type.equals(Type.DOUBLE_TYPE) || type.equals(Type.LONG_TYPE)) {
+          i++; // skip
+        }
       }
       mv.visitInsn(RETURN);
       mv.visitMaxs(0, 0);
