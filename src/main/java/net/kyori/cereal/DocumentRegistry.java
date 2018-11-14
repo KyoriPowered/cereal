@@ -25,6 +25,7 @@ package net.kyori.cereal;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import net.kyori.lambda.reflect.Annotations;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -45,7 +46,7 @@ final class DocumentRegistry {
           continue;
         }
         boolean excluded = method.isDefault();
-        final Document.@Nullable Exclude exclude = method.getAnnotation(Document.Exclude.class);
+        final Document.@Nullable Exclude exclude = Annotations.find(method, Document.Exclude.class);
         if(exclude != null) {
           excluded = exclude.value();
         }
@@ -53,7 +54,7 @@ final class DocumentRegistry {
           continue;
         }
         String name;
-        final Document.@Nullable Field field = method.getAnnotation(Document.Field.class);
+        final Document.@Nullable Field field = Annotations.find(method, Document.Field.class);
         if(field != null) {
           name = field.name();
         } else {

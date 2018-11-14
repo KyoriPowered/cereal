@@ -25,7 +25,7 @@ package net.kyori.cereal;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
-import net.kyori.lunar.exception.Exceptions;
+import net.kyori.lambda.exception.Exceptions;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
