@@ -25,7 +25,7 @@ package net.kyori.cereal;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
-import net.kyori.lambda.reflect.Annotations;
+import net.kyori.mu.reflect.Annotations;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
