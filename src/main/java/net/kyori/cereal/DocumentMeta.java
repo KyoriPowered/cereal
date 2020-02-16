@@ -27,6 +27,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
+import net.kyori.mu.Maybe;
 import net.kyori.mu.exception.Exceptions;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -114,8 +115,13 @@ final class DocumentMeta<D extends Document> {
 
     static <T> Field<T> create(final Method method) {
       final Type grt = method.getGenericReturnType();
-      if(grt instanceof ParameterizedType && ((ParameterizedType) grt).getRawType().equals(Optional.class)) {
-        return new OptionalField<>(method);
+      if(grt instanceof ParameterizedType) {
+        final Type raw = ((ParameterizedType) grt).getRawType();
+        if(raw instanceof Class<?> && ((Class<?>) raw).isAssignableFrom(Maybe.class)) {
+          return new MaybeField<>(method);
+        } else if(raw.equals(Optional.class)) {
+          return new OptionalField<>(method);
+        }
       }
       return new NormalField<>(method);
     }
@@ -139,6 +145,35 @@ final class DocumentMeta<D extends Document> {
     @Override
     @NonNull Type genericType() {
       return this.genericType;
+    }
+  }
+
+  static class MaybeField<T> extends Field<T> {
+    private final Type genericType;
+
+    MaybeField(final Method method) {
+      super(method);
+      this.genericType = ((ParameterizedType) method.getGenericReturnType()).getActualTypeArguments()[0];
+    }
+
+    @Override
+    @NonNull Class<?> type() {
+      return Maybe.class;
+    }
+
+    @Override
+    @NonNull Type genericType() {
+      return this.genericType;
+    }
+
+    @Override
+    @Nullable T get(final Object object) {
+      return ((Maybe<T>) super.get(object)).orDefault(null);
+    }
+
+    @Override
+    @Nullable Object deserialize(final JsonElement element, final JsonDeserializationContext context) {
+      return Maybe.maybe(context.deserialize(element, this.genericType()));
     }
   }
 

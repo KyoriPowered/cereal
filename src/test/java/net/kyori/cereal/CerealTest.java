@@ -26,6 +26,7 @@ package net.kyori.cereal;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import net.kyori.mu.Maybe;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -56,7 +57,12 @@ class CerealTest {
       }
 
       @Override
-      public Optional<String> value() {
+      public Maybe<String> maybeValue() {
+        return Maybe.just("kitten");
+      }
+
+      @Override
+      public Optional<String> optionalValue() {
         return Optional.of("bar");
       }
 
@@ -70,7 +76,8 @@ class CerealTest {
 
     assertEquals(source.id(), target.id());
     assertEquals(source.name(), target.name());
-    assertEquals(source.value(), target.value());
+    assertEquals(source.maybeValue(), target.maybeValue());
+    assertEquals(source.optionalValue(), target.optionalValue());
     assertEquals(source.strings(), target.strings());
   }
 
@@ -90,7 +97,8 @@ class CerealTest {
   public interface Entity extends Document {
     int id();
     String name();
-    Optional<String> value();
+    Maybe<String> maybeValue();
+    Optional<String> optionalValue();
     Map<String, List<String>> strings();
   }
 
