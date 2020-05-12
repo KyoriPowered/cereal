@@ -46,7 +46,7 @@ final class DocumentRegistry {
           continue;
         }
         boolean excluded = method.isDefault();
-        final Document.@Nullable Exclude exclude = Annotations.find(method, Document.Exclude.class);
+        final Document.@Nullable Exclude exclude = Annotations.findDeclared(method, Document.Exclude.class);
         if(exclude != null) {
           excluded = exclude.value();
         }
@@ -54,7 +54,7 @@ final class DocumentRegistry {
           continue;
         }
         String name;
-        final Document.@Nullable Field field = Annotations.find(method, Document.Field.class);
+        final Document.@Nullable Field field = Annotations.findDeclared(method, Document.Field.class);
         if(field != null) {
           name = field.name();
         } else {
